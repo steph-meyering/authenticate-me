@@ -1,4 +1,33 @@
+# Node.js dependencies
 node_modules
+
+# Environment variables
 .env
+
+# Build output
 build
+dist
+.next
+
+# OS-specific files
 .DS_Store
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Editor/IDE files
+.vscode/
+.idea/
+*.swp
+
+# Compiled files
+*.log
+*.out
+*.lock
+
+# Frontend specific ignores
+/public/static
+/public/build
+coverage/
