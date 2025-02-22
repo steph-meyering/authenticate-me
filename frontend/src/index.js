@@ -7,8 +7,12 @@ import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import store from './store'; 
+import { restoreCSRF, csrfFetch } from './store/csrf';
 
 if (process.env.NODE_ENV !== 'production') {
+  window.store = store;
+  restoreCSRF();
+  window.csrfFetch = csrfFetch;
   window.store = store;
 }
 
