@@ -1,9 +1,10 @@
 import { configureStore, combineReducers } from '@reduxjs/toolkit'; 
 import { thunk } from 'redux-thunk'; 
 import { default as logger } from 'redux-logger'; 
+import { default as sessionReducer } from './session';
 
 const rootReducer = combineReducers({
-  // Add your reducers here
+  session: sessionReducer,
 });
 
 const store = configureStore({
