@@ -3,10 +3,11 @@ import * as sessionActions from '../../store/session';
 import { useDispatch, useSelector } from 'react-redux';
 import { Navigate} from 'react-router-dom';
 
-function LoginFormPage() {
+function SignupFormPage() {
   const dispatch = useDispatch();
   const sessionUser = useSelector(state => state.session.user);
-  const [credential, setCredential] = useState('');
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState([]);
 
@@ -17,7 +18,7 @@ function LoginFormPage() {
   const handleSubmit = (e) => {
     e.preventDefault();
     setErrors([]);
-    return dispatch(sessionActions.login({ credential, password }))
+    return dispatch(sessionActions.signup({ username, email, password }))
       .catch(async (res) => {
         const data = await res.json();
         if (data && data.errors) setErrors(data.errors);
@@ -30,11 +31,20 @@ function LoginFormPage() {
         {errors.map((error, idx) => <li key={idx}>{error}</li>)}
       </ul>
       <label>
-        Username or Email
+        Username
         <input
           type="text"
-          value={credential}
-          onChange={(e) => setCredential(e.target.value)}
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          required
+        />
+      </label>
+      <label>
+        email
+        <input
+          type="text"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
           required
         />
       </label>
@@ -47,9 +57,9 @@ function LoginFormPage() {
           required
         />
       </label>
-      <button type="submit">Log In</button>
+      <button type="submit">Sign Up</button>
     </form>
   );
 }
 
-export default LoginFormPage;
+export default SignupFormPage;
