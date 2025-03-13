@@ -9,6 +9,7 @@ function SignupFormPage() {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [errors, setErrors] = useState([]);
 
   if (sessionUser) return (
@@ -18,6 +19,9 @@ function SignupFormPage() {
   const handleSubmit = (e) => {
     e.preventDefault();
     setErrors([]);
+    if (password !== confirmPassword) {
+      return setErrors(['Passwords do not match']);
+    }
     return dispatch(sessionActions.signup({ username, email, password }))
       .catch(async (res) => {
         const data = await res.json();
@@ -54,6 +58,15 @@ function SignupFormPage() {
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+      </label>
+      <label>
+        Confirm Password
+        <input
+          type="password"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
           required
         />
       </label>
