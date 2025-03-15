@@ -1,5 +1,5 @@
-import { csrfFetch } from './csrf';
 
+import { csrfFetch } from './csrf';
 const SET_USER = 'session/setUser';
 const REMOVE_USER = 'session/removeUser';
 const CREATE_USER = 'session/createUser';
@@ -9,6 +9,13 @@ const setUser = (user) => {
     type: SET_USER,
     payload: user,
   };
+};
+
+export const restoreUser = () => async dispatch => {
+  const response = await csrfFetch('/api/session');
+  const data = await response.json();
+  dispatch(setUser(data.user));
+  return response;
 };
 
 export const removeUser = () => {
