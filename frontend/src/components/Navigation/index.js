@@ -2,7 +2,7 @@ import React from 'react';
 import { NavLink } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import ProfileButton from './ProfileButton';
-// import './Navigation.css';
+import './Navigation.css';
 
 function Navigation({ isLoaded }){
   const sessionUser = useSelector(state => state.session.user);
@@ -10,12 +10,10 @@ function Navigation({ isLoaded }){
   let sessionLinks;
   
   if (sessionUser) {
-    console.log("if session user hit")
     sessionLinks = (
       <ProfileButton user={sessionUser} />
     );
   } else {
-    console.log("else session user hit")
     sessionLinks = (
       <>
         <NavLink to="/login">Log In</NavLink>
