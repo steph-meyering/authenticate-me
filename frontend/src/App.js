@@ -1,5 +1,5 @@
 import { Route, Routes } from "react-router-dom";
-import LoginFormPage from "./components/LoginFormPage"; 
+import LoginFormModal from "./components/LoginFormModal"; 
 import SignupFormPage from "./components/SignupFormPage";
 import Navigation from "./components/Navigation";
 import { useEffect, useState } from "react";  
@@ -16,11 +16,13 @@ function App() {
   return (
     <>
     <Navigation isLoaded={isLoaded} />
+    {isLoaded && (
       <Routes>
-        <Route path="/login" element={<LoginFormPage />}/>
+        <Route path="/login" element={<LoginFormModal />}/>
         <Route path="/signup" element={<SignupFormPage />}/>
       </Routes>
-    </>
+    )}
+  </>
   );
 }
 
