@@ -11,5 +11,10 @@ module.exports = {
     jwtConfig: {
       secret: process.env.JWT_SECRET,
       expiresIn: process.env.JWT_EXPIRES_IN
-    }
+    },
+    // plaid: {
+    //   clientId: process.env.PLAID_CLIENT_ID,
+    //   secret: process.env.PLAID_SECRET,
+    //   env: process.env.PLAID_ENV
+    // }
   };
