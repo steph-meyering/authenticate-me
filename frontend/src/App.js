@@ -1,6 +1,6 @@
 import { Route, Routes } from "react-router-dom";
-import LoginFormModal from "./components/LoginFormModal"; 
-import SignupFormPage from "./components/SignupFormPage";
+// import LoginFormModal from "./components/LoginFormModal"; 
+// import SignupFormPage from "./components/SignupFormPage";
 import Navigation from "./components/Navigation";
 import { useEffect, useState } from "react";  
 import * as sessionActions from "./store/session";
@@ -18,8 +18,8 @@ function App() {
     <Navigation isLoaded={isLoaded} />
     {isLoaded && (
       <Routes>
-        <Route path="/login" element={<LoginFormModal />}/>
-        <Route path="/signup" element={<SignupFormPage />}/>
+        {/* <Route path="/login" element={<LoginFormModal />}/> */}
+        {/* <Route path="/signup" element={<SignupFormPage />}/> */}
       </Routes>
     )}
   </>
