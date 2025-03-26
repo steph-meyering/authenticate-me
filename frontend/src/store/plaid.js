@@ -26,7 +26,20 @@ export const exchangePublicToken = (public_token) => async dispatch => {
   });
   const data = await response.json();
   dispatch(setAccessToken(data.access_token));
+  return data.access_token;
 }
+
+// Thunk to fetch accounts
+export const fetchAccounts = (access_token) => async dispatch => {
+  const response = await csrfFetch('/api/plaid/accounts/get', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ access_token }),
+  });
+  const data = await response.json();
+  dispatch(setAccounts(data.accounts));
+};
+
 
 // Initial state
 const initialState = {

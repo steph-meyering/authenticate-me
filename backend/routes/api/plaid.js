@@ -50,4 +50,17 @@ router.post('/exchange_public_token', async (req, res) => {
   }
 });
 
+// Route to fetch accounts
+router.post('/accounts/get', async (req, res) => {
+  const { access_token } = req.body;
+
+  try {
+    const response = await client.accountsGet({ access_token });
+    res.json(response.data);
+  } catch (error) {
+    console.error('Error fetching accounts:', error);
+    res.status(500).json({ error: 'Failed to fetch accounts' });
+  }
+});
+
 module.exports = router;

@@ -5,22 +5,27 @@ import { useDispatch, useSelector } from 'react-redux';
 
 function PlaidLink() {
   const dispatch = useDispatch();
-  const [linkToken, setLinkToken] = useState(null);
-  const [accessToken, setAccessToken] = useState(null);
+  const accounts = useSelector((state) => state.plaid.accounts);
+  const linkToken = useSelector((state) => state.plaid.linkToken);
+  const accessToken = useSelector((state) => state.plaid.accessToken);
+
 
   // Fetch Link token from backend
   useEffect(() => {
     const fetchLinkToken = async () => {
-      const token = await dispatch(plaidActions.createLinkToken());
-      setLinkToken(token);
+      await dispatch(plaidActions.createLinkToken());
     };
     fetchLinkToken();
   }, []);
 
   // Handle success when Plaid Link completes
   const onSuccess = async (public_token) => {
-    const access_token = await dispatch(plaidActions.exchangePublicToken(public_token));
-    setAccessToken(access_token);
+    try {
+      const access_token = await dispatch(plaidActions.exchangePublicToken(public_token));
+      await dispatch(plaidActions.fetchAccounts(access_token));
+    } catch (err) {
+      console.error("Failed to fetch accounts:", err);
+    }
   };
 
   const { open, ready } = usePlaidLink({
@@ -37,8 +42,23 @@ function PlaidLink() {
       ) : (
         <p>Loading...</p>
       )}
+      {accessToken ? <p>Access Token: {accessToken}</p> : null}
+
+      {accounts ? (
+        <div>
+          <h3>Accounts</h3>
+          <ul>
+            {accounts.map((account) => (
+              <li key={account.account_id}>
+                {account.name} - {account.balances.current} {account.balances.iso_currency_code}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
     </div>
   );
 }
+
 
 export default PlaidLink;
