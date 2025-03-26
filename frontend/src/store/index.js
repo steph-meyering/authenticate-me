@@ -2,9 +2,11 @@ import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import { thunk } from 'redux-thunk'; 
 import { default as logger } from 'redux-logger'; 
 import { default as sessionReducer } from './session';
+import { default as plaidReducer } from './plaid';
 
 const rootReducer = combineReducers({
   session: sessionReducer,
+  plaid: plaidReducer,
 });
 
 const store = configureStore({
