@@ -11,8 +11,12 @@ const setAccounts = (accounts) => ({ type: SET_ACCOUNTS, payload: accounts });
 export const resetPlaid = () => ({ type: RESET_PLAID });
 
 // Thunks
-export const createLinkToken = () => async dispatch => {
-  const response = await csrfFetch('/api/plaid/create_link_token', { method: 'POST' });
+export const createLinkToken = (external_id) => async dispatch => {
+  const response = await csrfFetch('/api/plaid/create_link_token', { 
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ external_id }),
+  });
   const data = await response.json();
   dispatch(setLinkToken(data.link_token));
   return data.link_token;

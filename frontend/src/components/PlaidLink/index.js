@@ -8,15 +8,16 @@ function PlaidLink() {
   const accounts = useSelector((state) => state.plaid.accounts);
   const linkToken = useSelector((state) => state.plaid.linkToken);
   const accessToken = useSelector((state) => state.plaid.accessToken);
-
+  const externalId = useSelector((state) => state.session.user?.externalId);
 
   // Fetch Link token from backend
   useEffect(() => {
+    if (!externalId) return;
     const fetchLinkToken = async () => {
-      await dispatch(plaidActions.createLinkToken());
+      await dispatch(plaidActions.createLinkToken(externalId));
     };
     fetchLinkToken();
-  }, []);
+  }, [externalId]);
 
   // Handle success when Plaid Link completes
   const onSuccess = async (public_token) => {

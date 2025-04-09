@@ -19,9 +19,10 @@ const client = new plaid.PlaidApi(
 
 // Route to create a Link token
 router.post('/create_link_token', async (req, res) => {
+  const { external_id } = req.body;
   try {
     const response = await client.linkTokenCreate({
-      user: { client_user_id: 'unique-user-id' },
+      user: { client_user_id: external_id },
       client_name: 'Authenticate Me Plaid',
       products: ['auth', 'transactions'],
       country_codes: ['US'],
