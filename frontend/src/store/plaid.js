@@ -8,6 +8,7 @@ const RESET_PLAID = "plaid/RESET_PLAID";
 const setLinkToken = (token) => ({ type: SET_LINK_TOKEN, payload: token });
 const setAccessToken = (token) => ({ type: SET_ACCESS_TOKEN, payload: token });
 const setAccounts = (accounts) => ({ type: SET_ACCOUNTS, payload: accounts });
+
 export const resetPlaid = () => ({ type: RESET_PLAID });
 
 // Thunks

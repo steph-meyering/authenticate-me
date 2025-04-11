@@ -1,4 +1,6 @@
 import { csrfFetch } from './csrf';
+import { resetPlaid } from './plaid';
+
 const SET_USER = 'session/SET_USER';
 const REMOVE_USER = 'session/REMOVE_USER';
 const CREATE_USER = 'session/CREATE_USER';
@@ -49,6 +51,7 @@ export const logout = () => async (dispatch) => {
     method: 'DELETE',
   });
   dispatch(removeUser());
+  dispatch(resetPlaid());
   return response;
 }
 
