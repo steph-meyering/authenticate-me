@@ -41,13 +41,27 @@ router.post('/exchange_public_token', async (req, res) => {
 
   try {
     const response = await client.itemPublicTokenExchange({ public_token });
-    const { access_token } = response.data;
+    const { access_token, item_id } = response.data;
 
-    // Save access_token securely (e.g., DB)
+    // Persist Plaid item to DB
+
     res.json({ access_token });
   } catch (error) {
     console.error('Error exchanging token:', error);
     res.status(500).json({ error: 'Failed to exchange token' });
+  }
+});
+// Route to fetch item
+router.post('/item/get', async (req, res) => {
+  const { access_token } = req.body;
+  console.log('Fetching item with access token:');
+  try {
+    const response = await client.itemGet({ access_token });
+    res.json(response.data);
+    console.log('Item data:', response.data);
+  } catch (error) {
+    console.error('Error fetching item:', error);
+    res.status(500).json({ error: 'Failed to fetch item' });
   }
 });
 
