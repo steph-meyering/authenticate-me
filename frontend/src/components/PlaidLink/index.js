@@ -9,6 +9,7 @@ function PlaidLink() {
   const linkToken = useSelector((state) => state.plaid.linkToken);
   const accessToken = useSelector((state) => state.plaid.accessToken);
   const externalId = useSelector((state) => state.session.user?.externalId);
+  const sessionUser = useSelector((state) => state.session.user);
 
   // Fetch Link token from backend
   useEffect(() => {
@@ -23,8 +24,8 @@ function PlaidLink() {
   const onSuccess = async (public_token, metadata) => {
     try {
       // console.log("metadata", metadata);
-      // TODO FIXME: add logic to prevent token exchange if item for FI already exists
-      const access_token = await dispatch(plaidActions.exchangePublicToken(public_token));
+      // TODO FIXME: add logic using metadata to prevent token exchange if item for FI already exists
+      const access_token = await dispatch(plaidActions.exchangePublicToken(public_token, externalId));
       await dispatch(plaidActions.fetchItem(access_token));
       await dispatch(plaidActions.fetchAccounts(access_token));
     } catch (err) {
@@ -39,12 +40,12 @@ function PlaidLink() {
 
   return (
     <div>
-      {linkToken ? (
+      {sessionUser ? (
         <button onClick={() => open()} disabled={!ready}>
           Connect Your Bank
         </button>
       ) : (
-        <p>Loading...</p>
+        <p>Please log in to connect your bank</p>
       )}
       {accessToken ? <p>Access Token: {accessToken}</p> : null}
 

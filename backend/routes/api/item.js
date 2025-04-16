@@ -1,10 +1,11 @@
 const express = require('express');
 const { Item } = require('../../db/models');
+const { requireAuth } = require('../../utils/auth');
 
 const router = express.Router();
 
-// Route to create a new item
-router.post('/', async (req, res) => {
+// FIXME: This route is not being used, instead added logic to create new item in the exchangePublicToken route
+router.post('/', requireAuth, async (req, res) => {
   const { accessToken, itemId, userExternalId } = req.body;
 
   try {

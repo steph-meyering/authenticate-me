@@ -26,12 +26,13 @@ export const createLinkToken = (external_id) => async dispatch => {
 }
 
 export const exchangePublicToken = (public_token) => async dispatch => {
-  const response = await csrfFetch('/api/plaid/exchange_public_token', {
+  const tokenExchangeResponse = await csrfFetch('/api/plaid/exchange_public_token', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ public_token }),
   });
-  const data = await response.json();
+  const data = await tokenExchangeResponse.json();
+
   dispatch(setAccessToken(data.access_token));
   return data.access_token;
 }

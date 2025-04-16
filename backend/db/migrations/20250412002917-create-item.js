@@ -9,21 +9,45 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       accessToken: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        allowNull: false
       },
       itemId: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        unique: true
+      },
+      userExternalId: {
+        type: Sequelize.UUID,
+        allowNull: false,
+        references: {
+          model: 'Users',
+          key: 'externalId'
+        },
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE'
+      },
+      institutionId: {
         type: Sequelize.STRING
       },
-      userId: {
-        type: Sequelize.INTEGER
+      institutionName: {
+        type: Sequelize.STRING
+      },
+      webhook: {
+        type: Sequelize.STRING
+      },
+      error: {
+        type: Sequelize.STRING
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.literal('NOW()')
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.literal('NOW()')
       }
     });
   },
