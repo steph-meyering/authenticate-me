@@ -50,8 +50,6 @@ module.exports = (sequelize, DataTypes) => {
 
   Item.deleteItem = async function (itemId) {
     return await Item.destroy({ where: { itemId } });
-    
-    
   };
 
   Item.getItemsForUser = async function (externalId) {

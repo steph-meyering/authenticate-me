@@ -48,7 +48,20 @@ export const fetchItem = (access_token) => async dispatch => {
   return data;
 }
 
-// Thunk to fetch accounts
+// Thunk to fetch all items for the logged-in user
+export const fetchAllItems = () => async dispatch => {
+  console.log("Fetching all items");
+  try {
+    const response = await csrfFetch('/api/items/');
+    const data = await response.json();
+    console.log("All items fetched", data);
+    return data.items; 
+  } catch (error) {
+    console.error("Error fetching items:", error);
+    throw error;
+  }
+};
+
 export const fetchAccounts = (access_token) => async dispatch => {
   const response = await csrfFetch('/api/plaid/accounts/get', {
     method: 'POST',

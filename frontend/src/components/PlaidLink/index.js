@@ -38,8 +38,16 @@ function PlaidLink() {
     onSuccess,
   });
 
+  const testFunction = async (externalId) => {
+    dispatch(plaidActions.fetchAllItems(externalId));
+  }
+  
   return (
     <div>
+      {sessionUser ? (
+        <button onClick={()=> testFunction(externalId)}> Test
+        </button>): null}
+  
       {sessionUser ? (
         <button onClick={() => open()} disabled={!ready}>
           Connect Your Bank

@@ -69,7 +69,7 @@ router.post('/item/get', async (req, res) => {
   const { access_token } = req.body;
   try {
     const response = await client.itemGet({ access_token });
-    // I want to update the item here
+    // Update the item in the database
     const { item_id, institution_id, institution_name, webhook, error } = response.data.item;
     await Item.updateItem(item_id, {
       institutionId: institution_id,
