@@ -40,15 +40,18 @@ module.exports = (sequelize, DataTypes) => {
     const item = await Item.create({ accessToken, itemId, userExternalId });
     return await Item.findOne({ where: { itemId } });
   };
-  Item.updateItem = async function (itemId, accessToken) {
-    const item = await Item.update({ accessToken }, { where: { itemId } });
+  Item.updateItem = async function (itemId, { institutionId, institutionName, webhook, error }) {
+    await Item.update(
+      { institutionId, institutionName, webhook, error },
+      { where: { itemId } }
+    );
     return await Item.findOne({ where: { itemId } });
   };
+
   Item.deleteItem = async function (itemId) {
-    const item = await Item.destroy({ where: { itemId } });
-    console.log('Item deleted:', item);
-    // FIXME: not sure what to return here
-    return ;
+    return await Item.destroy({ where: { itemId } });
+    
+    
   };
 
   Item.getItemsForUser = async function (externalId) {

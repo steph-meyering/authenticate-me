@@ -69,6 +69,15 @@ router.post('/item/get', async (req, res) => {
   const { access_token } = req.body;
   try {
     const response = await client.itemGet({ access_token });
+    // I want to update the item here
+    const { item_id, institution_id, institution_name, webhook, error } = response.data.item;
+    await Item.updateItem(item_id, {
+      institutionId: institution_id,
+      institutionName: institution_name,
+      webhook,
+      error,
+    });
+    // Send the item data back to the client
     res.json(response.data);
   } catch (error) {
     console.error('Error fetching item:', error);
