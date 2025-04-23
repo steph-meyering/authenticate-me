@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 function PlaidLink() {
   const dispatch = useDispatch();
   const accounts = useSelector((state) => state.plaid.accounts);
+  const items = useSelector((state) => state.plaid.items);
   const linkToken = useSelector((state) => state.plaid.linkToken);
   const accessToken = useSelector((state) => state.plaid.accessToken);
   const externalId = useSelector((state) => state.session.user?.externalId);
@@ -41,13 +42,13 @@ function PlaidLink() {
   const testFunction = async (externalId) => {
     dispatch(plaidActions.fetchAllItems(externalId));
   }
-  
+
   return (
     <div>
       {sessionUser ? (
-        <button onClick={()=> testFunction(externalId)}> Test
-        </button>): null}
-  
+        <button onClick={() => testFunction(externalId)}> Test Fetch items
+        </button>) : null}
+
       {sessionUser ? (
         <button onClick={() => open()} disabled={!ready}>
           Connect Your Bank
@@ -64,6 +65,20 @@ function PlaidLink() {
             {accounts.map((account) => (
               <li key={account.account_id}>
                 {account.name} - {account.balances.current} {account.balances.iso_currency_code}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+      {items ? (
+        <div>
+          <h3>ITEMS</h3>
+          <ul>
+            {items.map((item) => (
+              <li key={item.itemId}>
+                {item.institutionName} - 
+                <button onClick={() => dispatch(plaidActions.deleteItem(item.accessToken))}>Delete</button> 
+                <button onClick={() => dispatch(plaidActions.fetchItem(item.accessToken))}>/item/get</button>
               </li>
             ))}
           </ul>

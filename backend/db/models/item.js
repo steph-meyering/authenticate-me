@@ -48,8 +48,8 @@ module.exports = (sequelize, DataTypes) => {
     return await Item.findOne({ where: { itemId } });
   };
 
-  Item.deleteItem = async function (itemId) {
-    return await Item.destroy({ where: { itemId } });
+  Item.deleteItem = async function (accessToken) {
+    return await Item.destroy({ where: { accessToken } });
   };
 
   Item.getItemsForUser = async function (externalId) {

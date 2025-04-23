@@ -3,6 +3,7 @@ const SET_LINK_TOKEN = "plaid/SET_LINK_TOKEN";
 const SET_ACCESS_TOKEN = "plaid/SET_ACCESS_TOKEN";
 const SET_ACCOUNTS = "plaid/SET_ACCOUNTS";
 const SET_ITEM = "plaid/SET_ITEM";
+const SET_ITEMS = "plaid/SET_ITEMS";
 const RESET_PLAID = "plaid/RESET_PLAID";
 
 // Action creators
@@ -10,6 +11,7 @@ const setLinkToken = (token) => ({ type: SET_LINK_TOKEN, payload: token });
 const setAccessToken = (token) => ({ type: SET_ACCESS_TOKEN, payload: token });
 const setAccounts = (accounts) => ({ type: SET_ACCOUNTS, payload: accounts });
 const setItem = (item) => ({ type: SET_ITEM, payload: item });
+const setItems = (items) => ({ type: SET_ITEMS, payload: items });
 
 export const resetPlaid = () => ({ type: RESET_PLAID });
 
@@ -55,12 +57,29 @@ export const fetchAllItems = () => async dispatch => {
     const response = await csrfFetch('/api/items/');
     const data = await response.json();
     console.log("All items fetched", data);
+    dispatch(setItems(data));
     return data.items; 
   } catch (error) {
     console.error("Error fetching items:", error);
     throw error;
   }
 };
+
+export const deleteItem = (access_token) => async dispatch => {
+  const response = await csrfFetch(`/api/items/delete`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ access_token }),
+  });
+  if (response.ok) {
+    const data = await response.json();
+    dispatch(fetchAllItems());
+    return data;
+  } else {
+    const error = await response.json();
+    throw new Error(error.message);
+  }
+}
 
 export const fetchAccounts = (access_token) => async dispatch => {
   const response = await csrfFetch('/api/plaid/accounts/get', {
@@ -78,7 +97,7 @@ const initialState = {
   linkToken: null,
   accessToken: null,
   accounts: [],
-  item: null,
+  items: [],
 };
 
 const plaidReducer = (state = initialState, action) => {
@@ -91,6 +110,8 @@ const plaidReducer = (state = initialState, action) => {
       return { ...state, accounts: action.payload };
     case SET_ITEM:
       return { ...state, item: action.payload };
+    case SET_ITEMS:
+      return { ...state, items: action.payload };
     // Reset the state when the user logs out
     case RESET_PLAID:
       return initialState;
