@@ -50,9 +50,14 @@ function PlaidLink() {
         </button>) : null}
 
       {sessionUser ? (
-        <button onClick={() => open()} disabled={!ready}>
-          Connect Your Bank
-        </button>
+        <>
+          <button onClick={() => open()} disabled={!ready}>
+            Connect Your Bank
+          </button>
+          <button onClick={() => dispatch(plaidActions.createAndExchangeSandboxToken("ins_109508", ["auth"] ))}>
+            TEST - SANDBOX PUBLIC TOKEN
+          </button>
+          </>
       ) : (
         <p>Please log in to connect your bank</p>
       )}

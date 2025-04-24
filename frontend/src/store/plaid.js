@@ -3,6 +3,7 @@ const SET_LINK_TOKEN = "plaid/SET_LINK_TOKEN";
 const SET_ACCESS_TOKEN = "plaid/SET_ACCESS_TOKEN";
 const SET_ACCOUNTS = "plaid/SET_ACCOUNTS";
 const SET_ITEM = "plaid/SET_ITEM";
+const DELETE_ITEM = "plaid/DELETE_ITEM";
 const SET_ITEMS = "plaid/SET_ITEMS";
 const RESET_PLAID = "plaid/RESET_PLAID";
 
@@ -12,6 +13,10 @@ const setAccessToken = (token) => ({ type: SET_ACCESS_TOKEN, payload: token });
 const setAccounts = (accounts) => ({ type: SET_ACCOUNTS, payload: accounts });
 const setItem = (item) => ({ type: SET_ITEM, payload: item });
 const setItems = (items) => ({ type: SET_ITEMS, payload: items });
+const deleteItemAction = (access_token) => ({
+  type: DELETE_ITEM,
+  payload: access_token,
+});
 
 export const resetPlaid = () => ({ type: RESET_PLAID });
 
@@ -36,8 +41,32 @@ export const exchangePublicToken = (public_token) => async dispatch => {
   const data = await tokenExchangeResponse.json();
 
   dispatch(setAccessToken(data.access_token));
+  console.log("Public token exchanged", data);
   return data.access_token;
 }
+
+export const sandboxPublicTokenCreate = (institution_id, initial_products) => async dispatch => {
+  const response = await csrfFetch('/api/plaid/sandbox_public_token/create', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ institution_id, initial_products }),
+  });
+  const data = await response.json();
+  console.log("Sandbox public token created", data);
+  return data.public_token;
+}
+
+export const createAndExchangeSandboxToken = (institution_id, initial_products) => async dispatch => {
+  try {
+    const public_token = await dispatch(sandboxPublicTokenCreate(institution_id, initial_products));
+    const access_token = await dispatch(exchangePublicToken(public_token));
+    return access_token;;
+  } catch (error) {
+    console.error("Token flow failed:", error);
+    // Optionally handle or display UI errors
+    throw error;
+  }
+};
 
 export const fetchItem = (access_token) => async dispatch => {
   const response = await csrfFetch('/api/plaid/item/get', {
@@ -73,7 +102,7 @@ export const deleteItem = (access_token) => async dispatch => {
   });
   if (response.ok) {
     const data = await response.json();
-    dispatch(fetchAllItems());
+    dispatch(deleteItemAction(access_token));
     return data;
   } else {
     const error = await response.json();
@@ -112,7 +141,11 @@ const plaidReducer = (state = initialState, action) => {
       return { ...state, item: action.payload };
     case SET_ITEMS:
       return { ...state, items: action.payload };
-    // Reset the state when the user logs out
+    case DELETE_ITEM:
+      return {
+        ...state,
+        items: state.items.filter((item) => item.accessToken !== action.payload),
+      };
     case RESET_PLAID:
       return initialState;
     default:
