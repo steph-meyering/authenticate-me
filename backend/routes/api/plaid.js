@@ -85,6 +85,26 @@ router.post('/item/get', async (req, res) => {
   }
 });
 
+// Route to update item metadata
+router.post('/item/get_and_update_metadata', async (req, res) => {
+  const { access_token } = req.body;
+  try {
+    const itemGetResponse = await client.itemGet({ access_token });
+    console.log('Item Get Response:', itemGetResponse.data);
+    const { item_id, institution_id, institution_name, webhook, error } = itemGetResponse.data.item;
+    console.log("HEEEEERE",await Item.updateItem(item_id, {
+      institutionId: institution_id,
+      institutionName: institution_name,
+      webhook,
+      error,
+    }));
+    res.status(200).json({ message: 'Item metadata updated successfully' });
+  } catch (error) {
+    console.error('Error updating item metadata:', error);
+    res.status(500).json({ error: 'Failed to update item metadata' });
+  }
+});
+
 // Route to fetch accounts
 router.post('/accounts/get', async (req, res) => {
   const { access_token } = req.body;

@@ -2,7 +2,7 @@ import { csrfFetch } from './csrf';
 const SET_LINK_TOKEN = "plaid/SET_LINK_TOKEN";
 const SET_ACCESS_TOKEN = "plaid/SET_ACCESS_TOKEN";
 const SET_ACCOUNTS = "plaid/SET_ACCOUNTS";
-const SET_ITEM = "plaid/SET_ITEM";
+const ADD_ITEM = "plaid/ADD_ITEM";
 const DELETE_ITEM = "plaid/DELETE_ITEM";
 const SET_ITEMS = "plaid/SET_ITEMS";
 const RESET_PLAID = "plaid/RESET_PLAID";
@@ -11,7 +11,7 @@ const RESET_PLAID = "plaid/RESET_PLAID";
 const setLinkToken = (token) => ({ type: SET_LINK_TOKEN, payload: token });
 const setAccessToken = (token) => ({ type: SET_ACCESS_TOKEN, payload: token });
 const setAccounts = (accounts) => ({ type: SET_ACCOUNTS, payload: accounts });
-const setItem = (item) => ({ type: SET_ITEM, payload: item });
+const addItem = (item) => ({ type: ADD_ITEM, payload: item });
 const setItems = (items) => ({ type: SET_ITEMS, payload: items });
 const deleteItemAction = (access_token) => ({
   type: DELETE_ITEM,
@@ -52,7 +52,6 @@ export const sandboxPublicTokenCreate = (institution_id, initial_products) => as
     body: JSON.stringify({ institution_id, initial_products }),
   });
   const data = await response.json();
-  console.log("Sandbox public token created", data);
   return data.public_token;
 }
 
@@ -60,6 +59,7 @@ export const createAndExchangeSandboxToken = (institution_id, initial_products) 
   try {
     const public_token = await dispatch(sandboxPublicTokenCreate(institution_id, initial_products));
     const access_token = await dispatch(exchangePublicToken(public_token));
+    // const item = await dispatch(fetchItem(access_token));
     return access_token;;
   } catch (error) {
     console.error("Token flow failed:", error);
@@ -68,6 +68,8 @@ export const createAndExchangeSandboxToken = (institution_id, initial_products) 
   }
 };
 
+// export const createItem =
+
 export const fetchItem = (access_token) => async dispatch => {
   const response = await csrfFetch('/api/plaid/item/get', {
     method: 'POST',
@@ -75,13 +77,24 @@ export const fetchItem = (access_token) => async dispatch => {
     body: JSON.stringify({ access_token }),
   });
   const data = await response.json();
-  dispatch(setItem(data.item));
+  // dispatch(addItem(data.item));
+  return data;
+}
+
+export const getAndUpdateItemMetadata = (access_token) => async dispatch => {
+  const response = await csrfFetch('/api/plaid/item/get_and_update_metadata', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ 
+      access_token
+     }),
+  });
+  const data = await response.json();
   return data;
 }
 
 // Thunk to fetch all items for the logged-in user
 export const fetchAllItems = () => async dispatch => {
-  console.log("Fetching all items");
   try {
     const response = await csrfFetch('/api/items/');
     const data = await response.json();
@@ -137,8 +150,8 @@ const plaidReducer = (state = initialState, action) => {
       return { ...state, accessToken: action.payload };
     case SET_ACCOUNTS:
       return { ...state, accounts: action.payload };
-    case SET_ITEM:
-      return { ...state, item: action.payload };
+    case ADD_ITEM:
+      return { ...state, items: [...state.items, action.payload] };
     case SET_ITEMS:
       return { ...state, items: action.payload };
     case DELETE_ITEM:

@@ -23,11 +23,17 @@ function PlaidLink() {
 
   // Handle success when Plaid Link completes
   const onSuccess = async (public_token, metadata) => {
+    console.log("Plaid Link success:", public_token, metadata);
     try {
       // console.log("metadata", metadata);
       // TODO FIXME: add logic using metadata to prevent token exchange if item for FI already exists
-      const access_token = await dispatch(plaidActions.exchangePublicToken(public_token, externalId));
-      await dispatch(plaidActions.fetchItem(access_token));
+      console.log("exchanging public token");
+      const access_token = await dispatch(plaidActions.exchangePublicToken(public_token));
+      console.log("getting item metadata");
+      await dispatch(plaidActions.getAndUpdateItemMetadata(access_token));
+      console.log("fetching all items");
+      await dispatch(plaidActions.fetchAllItems(externalId));
+      // await dispatch(plaidActions.fetchItem(access_token));
       await dispatch(plaidActions.fetchAccounts(access_token));
     } catch (err) {
       console.error("Failed to fetch accounts:", err);

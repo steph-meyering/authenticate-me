@@ -38,7 +38,6 @@ router.post('/', async (req, res) => {
 
 // Route to fetch all items for the logged-in user
 router.get('/', async (req, res) => {
-  console.log('ROUTE - Fetching items for user');
   const userExternalId = req.user.externalId;
   try {
     const items = await Item.getItemsForUser(userExternalId);
@@ -52,7 +51,6 @@ router.get('/', async (req, res) => {
 // Route to delete an item
 router.post('/delete', async (req, res) => {
   const { access_token } = req.body;
-  console.log('ROUTE - Deleting item with access token:', access_token);
   try {
     await Item.deleteItem(access_token);
     console.log('Item removed from database');
