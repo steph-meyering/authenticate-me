@@ -1,8 +1,8 @@
 require('dotenv').config();
 const express = require('express');
-const plaid = require('plaid');
 const { requireAuth } = require('../../utils/auth');
 const { Item } = require('../../db/models');
+const plaidClient = require('../../utils/plaidClient');
 
 const router = express.Router();
 
@@ -10,24 +10,11 @@ const router = express.Router();
 // This middleware checks if the user is authenticated before allowing access to the routes
 router.use(requireAuth);
 
-const client = new plaid.PlaidApi(
-  new plaid.Configuration({
-    basePath: plaid.PlaidEnvironments[process.env.PLAID_ENV],
-    baseOptions: {
-      headers: {
-        'PLAID-CLIENT-ID': process.env.PLAID_CLIENT_ID,
-        'PLAID-SECRET': process.env.PLAID_SECRET,
-        'Plaid-Version': '2020-09-14',
-      },
-    },
-  })
-);
-
 // Route to create a Link token
 router.post('/create_link_token', async (req, res) => {
   const { external_id } = req.body;
   try {
-    const response = await client.linkTokenCreate({
+    const response = await plaidClient.linkTokenCreate({
       user: { client_user_id: external_id },
       client_name: 'Authenticate Me Plaid',
       products: ['auth', 'transactions'],
@@ -47,7 +34,7 @@ router.post('/exchange_public_token', async (req, res) => {
   const userExternalId = req.user.externalId;
 
   try {
-    const response = await client.itemPublicTokenExchange({ public_token });
+    const response = await plaidClient.itemPublicTokenExchange({ public_token });
     const { access_token, item_id } = response.data;
 
     // Persist Plaid item to DB
@@ -68,7 +55,7 @@ router.post('/exchange_public_token', async (req, res) => {
 router.post('/item/get', async (req, res) => {
   const { access_token } = req.body;
   try {
-    const response = await client.itemGet({ access_token });
+    const response = await plaidClient.itemGet({ access_token });
     // Update the item in the database
     const { item_id, institution_id, institution_name, webhook, error } = response.data.item;
     await Item.updateItem(item_id, {
@@ -89,7 +76,7 @@ router.post('/item/get', async (req, res) => {
 router.post('/item/get_and_update_metadata', async (req, res) => {
   const { access_token } = req.body;
   try {
-    const itemGetResponse = await client.itemGet({ access_token });
+    const itemGetResponse = await plaidClient.itemGet({ access_token });
     console.log('Item Get Response:', itemGetResponse.data);
     const { item_id, institution_id, institution_name, webhook, error } = itemGetResponse.data.item;
     console.log("HEEEEERE",await Item.updateItem(item_id, {
@@ -110,7 +97,7 @@ router.post('/accounts/get', async (req, res) => {
   const { access_token } = req.body;
 
   try {
-    const response = await client.accountsGet({ access_token });
+    const response = await plaidClient.accountsGet({ access_token });
     res.json(response.data);
   } catch (error) {
     console.error('Error fetching accounts:', error);
@@ -123,7 +110,7 @@ router.post('/sandbox_public_token/create', async (req, res) => {
   const { institution_id, initial_products } = req.body;
 
   try {
-    const response = await client.sandboxPublicTokenCreate({
+    const response = await plaidClient.sandboxPublicTokenCreate({
       institution_id,
       initial_products,
     });

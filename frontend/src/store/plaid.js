@@ -67,8 +67,6 @@ export const createAndExchangeSandboxToken = (institution_id, initial_products) 
   }
 };
 
-// export const createItem =
-
 export const fetchItem = (access_token) => async dispatch => {
   const response = await csrfFetch('/api/plaid/item/get', {
     method: 'POST',
