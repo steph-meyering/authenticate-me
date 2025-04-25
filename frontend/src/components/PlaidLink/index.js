@@ -90,6 +90,7 @@ function PlaidLink() {
                 {item.institutionName} - 
                 <button onClick={() => dispatch(plaidActions.deleteItem(item.accessToken))}>Delete</button> 
                 <button onClick={() => dispatch(plaidActions.fetchItem(item.accessToken))}>/item/get</button>
+                {item.createdAt}
               </li>
             ))}
           </ul>

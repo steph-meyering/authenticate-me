@@ -41,7 +41,6 @@ export const exchangePublicToken = (public_token) => async dispatch => {
   const data = await tokenExchangeResponse.json();
 
   dispatch(setAccessToken(data.access_token));
-  console.log("Public token exchanged", data);
   return data.access_token;
 }
 
@@ -59,10 +58,10 @@ export const createAndExchangeSandboxToken = (institution_id, initial_products) 
   try {
     const public_token = await dispatch(sandboxPublicTokenCreate(institution_id, initial_products));
     const access_token = await dispatch(exchangePublicToken(public_token));
-    // const item = await dispatch(fetchItem(access_token));
-    return access_token;;
+    const update = await dispatch(getAndUpdateItemMetadata(access_token));
+    await dispatch(fetchAllItems());
   } catch (error) {
-    console.error("Token flow failed:", error);
+    console.error("createAndExchangeSandboxToken failed:", error);
     // Optionally handle or display UI errors
     throw error;
   }

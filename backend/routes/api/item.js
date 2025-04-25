@@ -52,14 +52,14 @@ router.get('/', async (req, res) => {
 router.post('/delete', async (req, res) => {
   const { access_token } = req.body;
   try {
-    await Item.deleteItem(access_token);
-    console.log('Item removed from database');
+    // First, remove the item from Plaid
     const response = await client.itemRemove({ access_token });
     console.log('Item removed from Plaid:', response.data);
-    // Remove the item from the database
+    
+    // Then, remove the item from the database
     await Item.deleteItem(access_token);
     console.log('Item removed from database');
-    res.json(response.data);
+    res.json({ message: 'Item deleted successfully', plaid: response.data });
   } catch (error) {
     console.error('Error deleting item:', error);
     res.status(500).json({ error: 'Failed to delete item' });
