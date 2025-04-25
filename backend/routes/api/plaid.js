@@ -3,7 +3,7 @@ const express = require('express');
 const { requireAuth } = require('../../utils/auth');
 const { Item } = require('../../db/models');
 const plaidClient = require('../../utils/plaidClient');
-
+const plaidController = require('./controllers/plaidController');
 const router = express.Router();
 
 // require authentication middleware
@@ -11,22 +11,7 @@ const router = express.Router();
 router.use(requireAuth);
 
 // Route to create a Link token
-router.post('/create_link_token', async (req, res) => {
-  const { external_id } = req.body;
-  try {
-    const response = await plaidClient.linkTokenCreate({
-      user: { client_user_id: external_id },
-      client_name: 'Authenticate Me Plaid',
-      products: ['auth', 'transactions'],
-      country_codes: ['US'],
-      language: 'en',
-    });
-    res.json(response.data);
-  } catch (error) {
-    console.error('Error creating link token:', error);
-    res.status(500).json({ error: 'Failed to create link token' });
-  }
-});
+router.post('/create_link_token', plaidController.createLinkToken);
 
 // Route to exchange the public token for an access token
 router.post('/exchange_public_token', async (req, res) => {
