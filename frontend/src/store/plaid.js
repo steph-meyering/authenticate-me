@@ -57,8 +57,8 @@ export const sandboxPublicTokenCreate = (institution_id, initial_products) => as
 export const createAndExchangeSandboxToken = (institution_id, initial_products) => async dispatch => {
   try {
     const public_token = await dispatch(sandboxPublicTokenCreate(institution_id, initial_products));
-    const access_token = await dispatch(exchangePublicToken(public_token));
-    const update = await dispatch(getAndUpdateItemMetadata(access_token));
+    const {access_token} = await dispatch(exchangePublicToken(public_token));
+    console.log("finished exchanging sandbox token")
     await dispatch(fetchAllItems());
   } catch (error) {
     console.error("createAndExchangeSandboxToken failed:", error);
@@ -67,28 +67,17 @@ export const createAndExchangeSandboxToken = (institution_id, initial_products) 
   }
 };
 
-export const fetchItem = (access_token) => async dispatch => {
-  const response = await csrfFetch('/api/plaid/item/get', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ access_token }),
-  });
-  const data = await response.json();
-  // dispatch(addItem(data.item));
-  return data;
-}
-
-export const getAndUpdateItemMetadata = (access_token) => async dispatch => {
-  const response = await csrfFetch('/api/plaid/item/get_and_update_metadata', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ 
-      access_token
-     }),
-  });
-  const data = await response.json();
-  return data;
-}
+// export const getAndUpdateItemMetadata = (access_token) => async dispatch => {
+//   const response = await csrfFetch('/api/plaid/item/get_and_update_metadata', {
+//     method: 'POST',
+//     headers: { 'Content-Type': 'application/json' },
+//     body: JSON.stringify({ 
+//       access_token
+//      }),
+//   });
+//   const data = await response.json();
+//   return data;
+// }
 
 // Thunk to fetch all items for the logged-in user
 export const fetchAllItems = () => async dispatch => {

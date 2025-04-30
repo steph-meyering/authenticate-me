@@ -29,11 +29,8 @@ function PlaidLink() {
       // TODO FIXME: add logic using metadata to prevent token exchange if item for FI already exists
       console.log("exchanging public token");
       const access_token = await dispatch(plaidActions.exchangePublicToken(public_token));
-      console.log("getting item metadata");
-      await dispatch(plaidActions.getAndUpdateItemMetadata(access_token));
       console.log("fetching all items");
       await dispatch(plaidActions.fetchAllItems(externalId));
-      // await dispatch(plaidActions.fetchItem(access_token));
       await dispatch(plaidActions.fetchAccounts(access_token));
     } catch (err) {
       console.error("Failed to fetch accounts:", err);
@@ -89,7 +86,6 @@ function PlaidLink() {
               <li key={item.itemId}>
                 {item.institutionName} - 
                 <button onClick={() => dispatch(plaidActions.deleteItem(item.accessToken))}>Delete</button> 
-                <button onClick={() => dispatch(plaidActions.fetchItem(item.accessToken))}>/item/get</button>
                 {item.createdAt}
               </li>
             ))}
