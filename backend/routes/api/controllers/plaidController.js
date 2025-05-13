@@ -46,3 +46,17 @@ exports.getItem = async (req, res) => {
     res.status(500).json({ error: 'Failed to update item metadata' });
   }
 };
+
+exports.sandboxPublicTokenCreate = async (req, res) => {
+  const { institution_id, initial_products } = req.body;
+  try {
+    const response = await plaidClient.sandboxPublicTokenCreate({
+      institution_id,
+      initial_products,
+    });
+    res.json(response.data);
+  } catch (error) {
+    console.error('Error creating sandbox public token:', error);
+    res.status(500).json({ error: 'Failed to create sandbox public token' });
+  }
+}

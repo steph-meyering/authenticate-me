@@ -7,8 +7,7 @@ const plaidController = require('./controllers/plaidController');
 const itemController = require('./controllers/itemController');
 const router = express.Router();
 
-// require authentication middleware
-// This middleware checks if the user is authenticated before allowing access to the routes
+// require authentication middleware to ensure the user is authenticated before allowing access to the routes
 router.use(requireAuth);
 
 // Route to create a Link token
@@ -19,6 +18,9 @@ router.post('/exchange_public_token', plaidController.exchangePublicToken);
 
 // Route to update item metadata
 router.post('/item/get_and_update_metadata', itemController.updateItemMetadata);
+
+// Route to create a sandbox public token
+router.post('/sandbox_public_token/create', plaidController.sandboxPublicTokenCreate);
 
 // Route to fetch accounts
 router.post('/accounts/get', async (req, res) => {
@@ -33,21 +35,6 @@ router.post('/accounts/get', async (req, res) => {
   }
 });
 
-// Route to create a sandbox public token
-router.post('/sandbox_public_token/create', async (req, res) => {
-  const { institution_id, initial_products } = req.body;
-
-  try {
-    const response = await plaidClient.sandboxPublicTokenCreate({
-      institution_id,
-      initial_products,
-    });
-    res.json(response.data);
-  } catch (error) {
-    console.error('Error creating sandbox public token:', error);
-    res.status(500).json({ error: 'Failed to create sandbox public token' });
-  }
-});
 
 
 module.exports = router;

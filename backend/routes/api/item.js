@@ -65,5 +65,21 @@ router.post('/delete', async (req, res) => {
     res.status(500).json({ error: 'Failed to delete item' });
   }
 });
+// router.post('/delete', async (req, res) => {
+//   const { access_token } = req.body;
+//   try {
+//     // First, remove the item from Plaid
+//     const response = await client.itemRemove({ access_token });
+//     console.log('Item removed from Plaid:', response.data);
+    
+//     // Then, remove the item from the database
+//     await Item.deleteItem(access_token);
+//     console.log('Item removed from database');
+//     res.json({ message: 'Item deleted successfully', plaid: response.data });
+//   } catch (error) {
+//     console.error('Error deleting item:', error);
+//     res.status(500).json({ error: 'Failed to delete item' });
+//   }
+// });
 
 module.exports = router;
